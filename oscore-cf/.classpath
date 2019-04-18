@@ -35,5 +35,6 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="src" path="/cf-secure"/>
+	<classpathentry kind="src" path="/californium-proxy"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

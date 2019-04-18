@@ -55,7 +55,25 @@ public class EvalDtlsClient {
 			builder.setConnector(dtlsConnector);
 			
 			client.setEndpoint(builder.build());
-			Request r = new Request(Code.POST);
+		
+			for(int payload_len = 5; payload_len < 125; payload_len += 5) {
+				System.out.println(payload_len);
+				Request r = new Request(Code.POST);
+				byte[] payload = new byte[payload_len];
+				Arrays.fill(payload, (byte)0x61);
+				r.setPayload(payload);
+				CoapResponse resp = client.advanced(r);
+				if(resp == null) {
+					System.out.println("ERROR: Client application received no response!");
+					return;
+				}
+				if( resp.getPayload().length != payload_len) {
+					System.out.println("FUCKUP!" + payload_len);
+				}
+			}
+			System.out.println("Done!");
+			
+			/*	Request r = new Request(Code.POST);
 			byte[] payload = {0x61, 0x61, 0x61, 0x61}; 
 			r.setPayload(payload);
 			CoapResponse resp = client.advanced(r);
@@ -75,7 +93,7 @@ public class EvalDtlsClient {
 			System.out.println("Response code:\t" + resp.getCode());
 			System.out.println("Content-Format:\t" + resp.getOptions().getContentFormat());
 			System.out.println("Payload:\t" + resp.getResponseText());
-			
+			*/
 			client.shutdown();
 		
 		} catch (URISyntaxException e) {

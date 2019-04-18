@@ -17,6 +17,8 @@
  ******************************************************************************/
 package org.eclipse.californium.oscore;
 
+import java.util.Arrays;
+
 import org.eclipse.californium.core.CoapClient;
 import org.eclipse.californium.core.CoapResponse;
 import org.eclipse.californium.core.Utils;
@@ -70,7 +72,25 @@ public class EvalOscoreClient {
 
 		String resourceUri = "/test/caps";
 		OscoreClient c = new OscoreClient(baseUri + resourceUri);
-		Request r = new Request(Code.POST);
+		
+		for(int payload_len = 5; payload_len < 125; payload_len += 5) {
+			System.out.println(payload_len);
+			Request r = new Request(Code.POST);
+			byte[] payload = new byte[payload_len];
+			Arrays.fill(payload, (byte)0x61);
+			r.setPayload(payload);
+			CoapResponse resp = c.advanced(r);
+			if(resp == null) {
+				System.out.println("ERROR: Client application received no response!");
+				return;
+			}
+			if( resp.getPayload().length != payload_len) {
+				System.out.println("FUCKUP!" + payload_len);
+			}
+		}
+		
+		System.out.println("Done!");
+	/*	Request r = new Request(Code.POST);
 		byte[] payload = {0x61, 0x61, 0x61, 0x61}; 
 		r.setPayload(payload);
 		
@@ -89,7 +109,7 @@ public class EvalOscoreClient {
 		System.out.println("Parsed CoAP response: ");
 		System.out.println("Response code:\t" + resp.getCode());
 		System.out.println("Content-Format:\t" + resp.getOptions().getContentFormat());
-		System.out.println("Payload:\t" + resp.getResponseText());
+		System.out.println("Payload:\t" + resp.getResponseText()); */
 	}
 
 	
